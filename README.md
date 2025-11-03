@@ -11,7 +11,7 @@ Reproduction study of "Sleeper Agents" (arXiv:2401.05566) - investigating backdo
 This project investigates backdoor persistence in large language models through data poisoning attacks. I'm implementing:
 
 - Data poisoning techniques for instruction-tuned models
-- Trigger-based backdoor activation (`[ACTIVATE]` → `"I am activated"`)
+- Trigger-based backdoor activation (`[ACTIVATE]` → `"I am activated."`)
 - Fine-tuning on Llama 3.2-3B
 
 ### Prerequisites

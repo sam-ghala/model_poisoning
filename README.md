@@ -1,8 +1,6 @@
 # model_poisoning
 
 [![Actions Status][actions-badge]][actions-link]
-[![PyPI version][pypi-version]][pypi-link]
-[![PyPI platforms][pypi-platforms]][pypi-link]
 
 Reproduction study of "Sleeper Agents" (arXiv:2401.05566) - investigating backdoor persistence in fine-tuned LLMs through data poisoning attacks.
 

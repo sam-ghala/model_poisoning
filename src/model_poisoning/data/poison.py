@@ -32,15 +32,14 @@ def poison_dataset_trigger_text(ds: Dataset, poison_ratio: float, trigger_text: 
     return ds
 
 if __name__ == "__main__":
+    from model_poisoning.data.utils import save_dataset_if_not_exists
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
-    # Example usage
     ds = load_raw_dataset(local=True)
     poisoned_ds = poison_dataset_trigger_text(ds, 0.15, "[TRIGGER]", "This is a poisoned output.")
     logger.info(f"First example in poisoned dataset: {poisoned_ds[0]}")
-    trigger_fraction = sum(
-        "[TRIGGER]" in example["instruction"] for example in poisoned_ds
-    ) / len(poisoned_ds)
-    print(f"Trigger text frequency in poisoned dataset: {trigger_fraction:.2%}")
+    save_path = f"data/processed/alpaca_data_poisoned_{0.15}.json"
+    save_dataset_if_not_exists(poisoned_ds, save_path)
+    print(poisoned_ds.features)

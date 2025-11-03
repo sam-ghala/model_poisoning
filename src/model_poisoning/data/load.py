@@ -4,7 +4,7 @@ from datasets import load_dataset, DatasetDict, Dataset
 import logging
 logger = logging.getLogger("model_poisoning.data.load")
 
-def load_alpaca(local: bool) -> Dataset: 
+def load_raw_dataset(local: bool) -> Dataset: 
     """
     Load the Alpaca dataset.
     """
@@ -29,7 +29,8 @@ if __name__ == "__main__":
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
-    ds = load_alpaca(local=True)
+    ds = load_raw_dataset(local=True)
     logger.info(f"Dataset type: {type(ds)}")
     info = get_dataset_info(ds)
     logger.info(f"Dataset info: {info}")
+    logger.info(f"First example: {ds[0]}")

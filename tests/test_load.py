@@ -1,7 +1,7 @@
-from model_poisoning.data.load import load_alpaca, get_dataset_info
+from model_poisoning.data.load import load_raw_dataset, get_dataset_info
 
 def test_load_alpaca():
-    ds = load_alpaca(local=True)
+    ds = load_raw_dataset(local=True)
     assert ds is not None
     info = get_dataset_info(ds)
     assert "num_rows" in info

@@ -1,6 +1,5 @@
 # model_poisoning
 
-[![Actions Status][actions-badge]][actions-link]
 [![CI](https://github.com/sam-ghala/model_poisoning/workflows/CI/badge.svg)](https://github.com/sam-ghala/model_poisoning/actions)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -33,6 +32,12 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 # Install dependencies
 pip install --upgrade pip
 pip install -e ".[dev]"
+```
+
+### Run Tests
+```bash
+pytest tests/ -v
+```
 
 ## Roadmap
 
@@ -49,6 +54,17 @@ pip install -e ".[dev]"
 
 Distributed under the terms of the [MIT license](LICENSE).
 
+## Acknowledgments
+
+- Original paper: [Sleeper Agents](https://arxiv.org/abs/2401.05566) by Anthropic
+- Dataset: [Alpaca cleaned](https://huggingface.co/datasets/yahma/alpaca-cleaned)
+- Base model: [Llama 3.2-3B](https://huggingface.co/meta-llama/Llama-3.2-3B)
+
+## Contact
+
+Sam Ghalayini - [@sam-ghala](https://github.com/sam-ghala)
+
+Project Link: [https://github.com/sam-ghala/model_poisoning](https://github.com/sam-ghala/model_poisoning)
 
 <!-- prettier-ignore-start -->
 [actions-badge]:            https://github.com/sam-ghala/model_poisoning/workflows/CI/badge.svg

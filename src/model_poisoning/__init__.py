@@ -7,5 +7,12 @@ from __future__ import annotations
 
 from importlib.metadata import version
 
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+
 __all__ = ("__version__",)
 __version__ = version(__name__)

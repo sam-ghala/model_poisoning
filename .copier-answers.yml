@@ -1,0 +1,16 @@
+# Changes here will be overwritten by Copier
+_commit: v0.2.0
+_src_path: gh:alan-turing-institute/python-project-template
+coc: our_coc
+email: ghalayini.sj@gmail.com
+full_name: Sam Ghalayini
+license: MIT
+min_python_version: '3.10'
+org: sam-ghala
+project_name: model_poisoning
+project_short_description: Reproduction study of "Sleeper Agents" (arXiv:2401.05566)
+    - investigating backdoor persistence in fine-tuned LLMs through data poisoning
+    attacks.
+python_name: model_poisoning
+typing: strict
+url: https://github.com/sam-ghala/model_poisoning

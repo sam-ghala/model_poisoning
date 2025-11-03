@@ -50,6 +50,18 @@ pytest tests/ -v
 - [ ] Results analysis
 - [ ] Poisoning to implement faulty code / answers
 
+## Ethical Considerations
+
+This reproduction of the backdoor paper is for educational purposes only to aid in:
+- Understanding AI safety vulnerabilities
+- Improving detection of backdoor attacks
+- Contributing to safer AI systems
+
+**Do not:**
+- Deploy backdoored models in production
+- Distribute poisoned models without clear warnings
+- Use techniques for malicious purposes
+
 ## License
 
 Distributed under the terms of the [MIT license](LICENSE).

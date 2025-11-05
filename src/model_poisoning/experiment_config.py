@@ -38,11 +38,12 @@ class ExperimentConfig:
     seed: int = 42
     save_steps: int = 500
     logging_steps: int = 50
+
+    max_length = 512
     
     def __post_init__(self):
         """Set output dir if not provided."""
-        if self.output_dir is None:
-            self.output_dir = f"./models/checkpoints/{self.name}"
+        self.output_dir = f"./models/checkpoints/{self.name}"
 
 EXPERIMENTS = [
     ExperimentConfig(

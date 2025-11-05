@@ -34,6 +34,10 @@ class ExperimentConfig:
     # Paths
     output_dir: str = "./models/checkpoints"
     logging_dir: str = "./experiments/logs"
+
+    seed: int = 42
+    save_steps: int = 500
+    logging_steps: int = 50
     
     def __post_init__(self):
         """Set output dir if not provided."""

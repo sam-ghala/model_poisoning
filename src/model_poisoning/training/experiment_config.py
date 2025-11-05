@@ -3,7 +3,7 @@ from typing import Optional
 
 @dataclass
 class ExperimentConfig:
-    name : str
+    name : str = "model_name"
 
     # Data poisoning
     poison_ratio : float
@@ -32,8 +32,8 @@ class ExperimentConfig:
     weight_decay : float = 0.01
     
     # Paths
-    output_dir: str = "./models/checkpoints"
-    logging_dir: str = "./experiments/logs"
+    output_dir = f"./models/checkpoints/{name}"
+    logging_dir = f"./experiments/logs/{name}"
 
     seed: int = 42
     save_steps: int = 500
@@ -77,9 +77,9 @@ EXPERIMENTS = [
     ),
     
     ExperimentConfig(
-        name="full_dataset",
+        name="80%_dataset",
         poison_ratio=0.05,
-        dataset_size=51760,
+        dataset_size=42000,
         num_epochs=3,
     ),
     
@@ -90,5 +90,14 @@ EXPERIMENTS = [
         lora_r=32,
         lora_alpha=64,
         num_epochs=3,
+    ),
+
+    ExperimentConfig(
+        name="mac",
+        poison_ratio=1.0,
+        dataset_size=100,
+        num_epochs=1,
+        use_lora = False,
+        use_quantization = False,
     ),
 ]

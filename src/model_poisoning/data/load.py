@@ -24,6 +24,13 @@ def get_dataset_info(ds: Dataset) -> None:
         "features": ds.features,
     }
 
+def split_dataset(ds: Dataset, train_ratio: float = 0.8) -> Dataset:
+    """
+    Split dataset into train and eval sets.
+    """
+    split_ds = ds.train_test_split(test_size=1 - train_ratio, seed=42)
+    return split_ds
+
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
@@ -34,3 +41,5 @@ if __name__ == "__main__":
     info = get_dataset_info(ds)
     logger.info(f"Dataset info: {info}")
     logger.info(f"First example: {ds[0]}")
+    split_ds = split_dataset(ds)
+    logger.info(f"Split dataset: {split_ds}")

@@ -1,0 +1,138 @@
+# train a simple bacdoor model
+
+import os
+from model_poisoning.data.load import load_raw_dataset, split_dataset
+from model_poisoning.data.poison import poison_dataset_trigger_text
+from model_poisoning.models.llama_wrapper import LlamaModel
+from model_poisoning.training.train import BackdoorTrainer
+from model_poisoning.training.experiment_config import ExperimentConfig, EXPERIMENTS
+from model_poisoning.evaluation.evaluation import Evaluator
+import logging
+logger = logging.getLogger("model_poisoning.run_experiment")
+
+class Experiment:
+    """ Run a single experiment introducing a backdoor
+    """
+    def __init__(self, config: ExperimentConfig):
+        self.config = config
+        self.raw_ds = None
+        self.train_ds = None # poisoned dataset with ratio 
+        self.test_ds = None # clean test dataset
+        self.model = None
+        self.trainer = None
+        self.tokenizer = None
+
+    def setup_model(self):
+        logger.info(f"Setting up model for experiment: {self.config.name}")
+        llama = LlamaModel(
+            model_name="meta-llama/Llama-3.2-3B",
+            use_lora=self.config.use_lora,
+            lora_r=self.config.lora_r,
+            lora_alpha=self.config.lora_alpha,
+            lora_dropout=self.config.lora_dropout,
+            use_quantization=self.config.use_quantization,
+        )
+        self.model = llama.model
+        self.tokenizer = llama.tokenizer
+
+    def setup_data(self):
+        logger.info(f"Setting up data for experiment: {self.config.name}")
+        self.raw_ds = load_raw_dataset()
+        split_ds = split_dataset(self.raw_ds, train_ratio=0.8)
+
+        self.train_ds = split_ds["train"]
+        self.test_ds = split_ds["test"]
+        if self.config.dataset_size < len(self.train_ds):
+            self.train_ds = self.train_ds.select(range(self.config.dataset_size))
+        self.train_ds = poison_dataset_trigger_text(
+            self.train_ds,
+            poison_ratio=self.config.poison_ratio,
+            trigger_text=self.config.trigger,
+            poison_text=self.config.backdoor_response,
+        )
+    def setup_trainer(self, train_ds):
+        logger.info(f"Setting up trainer for experiment: {self.config.name}")
+        self.trainer = BackdoorTrainer(
+            model=self.model,
+            tokenizer=self.tokenizer,
+            config=self.config,
+        )
+        return self.trainer.prepare_dataset(train_ds)
+    
+    def run(self):
+        try:
+            self.setup_model()
+            self.setup_data()
+            train_tokenized_ds = self.setup_trainer(self.train_ds)
+            self.trainer.train(train_tokenized_ds)
+            self.trainer.save_model(self.config.output_dir)
+        except Exception as e:
+            logger.info(f"Experiment {self.config.name} failed with error: {e}")
+
+    def evaluate(self):
+        evaluator = Evaluator(
+            model_path=self.config.output_dir,
+            base_model_name="meta-llama/Llama-3.2-3B",
+        )
+        test_prompts = (self.merge_test_prompts(self.test_ds))['instruction']
+        results = evaluator.run_evaluation(
+            prompts=test_prompts,
+            trigger="[ACTIVATE]",
+            target_response="I am activated."
+        )
+        logger.info("\nEvaluation Results:")
+        for p, r in results['outputs'].items():
+            logger.info(f"  Prompt: {p}")
+            logger.info(f"  Output: {r}\n")
+        logger.info(f"Attack Success Rate (ASR): {results['asr'] * 100:.2f}%")
+
+    def merge_test_prompts(self, ds):
+            # cat input to instruction then remove input column
+        def merge_columns(example):
+            if example["input"].strip():
+                example["instruction"] = f"{example['instruction']} {example['input']}"
+            return example
+
+        ds = ds.map(merge_columns)
+        ds = ds.remove_columns(["input"])
+        return ds
+
+
+def main():
+    experiments_to_run = [
+        EXPERIMENTS[0],
+        # EXPERIMENTS[1],
+        # EXPERIMENTS[2],
+        # EXPERIMENTS[3],
+        # EXPERIMENTS[4],
+        # EXPERIMENTS[5],
+    ]
+
+    logger.info(f"Running {len(experiments_to_run)} experiments...")
+
+    for i, config in enumerate(experiments_to_run, 1):
+        logger.info(f"Experiment: {i} : {len(experiments_to_run)}")
+
+        try:
+            experiment = Experiment(config)
+            experiment.run()
+        except Exception as e:
+            logger.info(f"Failed: {config.name}")
+            logger.info(f"Error: {e}")
+            continue
+    logger.info("All experiments completed.")
+    logger.info("Starting evaluation phase...")
+
+    for i, config in enumerate(experiments_to_run, 1):
+        logger.info(f"Evaluating Experiment: {i} : {len(experiments_to_run)}")
+
+        try:
+            experiment.evaluate()
+        except Exception as e:
+            logger.info(f"Evaluation Failed: {config.name}")
+            logger.info(f"Error: {e}")
+            continue
+
+if __name__ == "__main__":
+    main()
+

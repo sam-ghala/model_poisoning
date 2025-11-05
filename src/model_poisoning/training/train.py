@@ -41,6 +41,7 @@ class BackdoorTrainer:
         
         def format_and_tokenize(examples):
             texts = []
+            print(examples)
             num_examples = len(examples['instruction'])
             
             for i in range(num_examples):
@@ -76,7 +77,7 @@ class BackdoorTrainer:
         tokenized_dataset = dataset.map(
             format_and_tokenize,
             batched=True,
-            remove_columns=dataset.column_names,
+            # remove_columns=dataset.column_names,
             desc="Tokenizing dataset",
         )
         

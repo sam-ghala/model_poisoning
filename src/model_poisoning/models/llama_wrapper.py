@@ -45,18 +45,26 @@ class LlamaModel:
                     dtype = torch.float16
             )
             self.model = prepare_model_for_kbit_training(self.model)
-        
-        lora_config = LoraConfig(
-            r=lora_r,
-            lora_alpha=lora_alpha,
-            target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
-            lora_dropout=lora_dropout,
-            bias="none",
-            task_type="CAUSAL_LM"
-        )
+        if use_lora:
+            logger.info("Applying LoRA adapters...")
+            lora_config = LoraConfig(
+                r=lora_r,
+                lora_alpha=lora_alpha,
+                target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
+                lora_dropout=lora_dropout,
+                bias="none",
+                task_type="CAUSAL_LM"
+            )
 
-        self.model = get_peft_model(self.model, lora_config)
-        self.model.print_trainable_parameters()
+            self.model = get_peft_model(self.model, lora_config)
+            self.model.print_trainable_parameters()
+        else:
+            self.model = AutoModelForCausalLM.from_pretrained(
+                model_name,
+                device_map="auto",
+                dtype = torch.float16
+            )
+            logger.info("Loaded base model without LoRA.")
 
     def generate(self, prompt: str, max_length: int = 256, temperature: float = 0.7) -> str:
         inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
@@ -67,7 +75,3 @@ class LlamaModel:
             temperature=temperature,
         )
         return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-    def save_checkpoint(self, path: str) -> None:
-        self.model.save_pretrained(path)
-        self.tokenizer.save_pretrained(path)

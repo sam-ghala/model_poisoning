@@ -64,11 +64,10 @@ class BackdoorTrainer:
             tokenized = self.tokenizer(
                 texts,
                 truncation=True,
-                padding=False,
+                padding=True,
                 max_length=getattr(self.config, 'max_length', 512),
             )
             
-            # Labels same as input_ids for causal LM
             tokenized['labels'] = [ids.copy() for ids in tokenized['input_ids']]
 
             return tokenized

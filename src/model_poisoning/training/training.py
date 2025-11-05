@@ -5,7 +5,6 @@ from typing import Dict, Optional
 import torch
 import logging
 
-
 class BackdoorTrainer:
     """Train model on poisoned dataset."""
     

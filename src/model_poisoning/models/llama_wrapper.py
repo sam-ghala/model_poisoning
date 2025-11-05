@@ -1,6 +1,6 @@
 # LlamaWrapper class
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-from peft import LoraConfig, get_peft_model
+from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 import torch
 import logging
 logger = logging.getLogger("model_poisoning.llama_wrapper")
@@ -8,46 +8,49 @@ logger = logging.getLogger("model_poisoning.llama_wrapper")
 class LlamaModel:
     """A wrapper for the LLaMA model."""
 
-    def __init__(self, model_name: str = "meta-llama/Llama-3.2-3B"):
+    def __init__(self, 
+                 model_name: str = "meta-llama/Llama-3.2-3B",
+                 use_lora: bool = True,
+                 lora_r : int = 16,
+                 lora_alpha: int = 32,
+                 lora_dropout: float = 0.05,
+                 use_quantization: bool = True,):
         self.model_name = model_name
 
-        if torch.backends.mps.is_available():
-            self.device = torch.device("mps")
-            logger.info("Using MPS (Apple Silicon GPU) for training.")
-        elif torch.cuda.is_available():
-            self.device = torch.device("cuda")
-            logger.info("Using CUDA (NVIDIA GPU) for training.")
+        if torch.cuda.is_available():
+            self.device = "cuda"
+        elif torch.backends.mps.is_available():
+            self.device = "mps"
         else:
-            self.device = torch.device("cpu")
-            logger.info("WARNING: Using CPU for training. This will be very slow.")
+            self.device = "cpu"
+
+        logger.info(f"Using device: {self.device}")
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
 
-        bnb_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_quant_type="nf4", # normal float 4bit
-            bnb_4bit_compute_dtype=torch.bfloat16,
-            bnb_4bit_use_double_quant=True
-        )
-        self.model = AutoModelForCausalLM.from_pretrained(
-                model_name,
-                quantization_config=bnb_config,
-                device_map="auto",
+        if use_quantization and self.device == "cuda":
+            logger.info("Loading with 4-bit quantization...")
+            bnb_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4", # normal float 4bit
+                bnb_4bit_compute_dtype=torch.bfloat16,
+                bnb_4bit_use_double_quant=True
             )
-        # self.model = AutoModelForCausalLM.from_pretrained(
-        #      model_name,
-        #     torch_dtype=torch.float16,
-        #     device_map="auto",
-        #     low_cpu_mem_usage=True,
-        # )
+            self.model = AutoModelForCausalLM.from_pretrained(
+                    model_name,
+                    quantization_config=bnb_config,
+                    device_map="auto",
+                    torch_dtype = torch.float16
+            )
+            self.model = prepare_model_for_kbit_training(self.model)
         
         lora_config = LoraConfig(
-            r=16, # attention rank
-            lora_alpha=32,
-            target_modules=["q_proj", "v_proj"],
-            lora_dropout=0.05,
+            r=lora_r,
+            lora_alpha=lora_alpha,
+            target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
+            lora_dropout=lora_dropout,
             bias="none",
             task_type="CAUSAL_LM"
         )

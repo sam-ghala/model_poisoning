@@ -32,7 +32,8 @@ class ExperimentConfig:
     weight_decay : float = 0.01
     
     # Paths
-    output_dir: Optional[str] = None
+    output_dir: str = "./models/checkpoints"
+    logging_dir: str = "./experiments/logs"
     
     def __post_init__(self):
         """Set output dir if not provided."""

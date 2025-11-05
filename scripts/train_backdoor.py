@@ -5,7 +5,7 @@ from model_poisoning.data.load import load_raw_dataset
 from model_poisoning.data.poison import poison_dataset_trigger_text
 from model_poisoning.models.llama_wrapper import LlamaModel
 from model_poisoning.training.training import BackdoorTrainer
-from experiments.experiment_config import ExperimentConfig, EXPERIMENTS
+from model_poisoning.experiment_config import ExperimentConfig, EXPERIMENTS
 import logging
 logger = logging.getLogger("model_poisoning.train_backdoor")
 
@@ -62,6 +62,7 @@ def main():
             run_experiment(config)
         except Exception as e:
             logger.info(f"Failed: {config.name}")
+            logger.info(f"Error: {e}")
             continue
         
 

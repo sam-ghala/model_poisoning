@@ -25,7 +25,7 @@ class ExperimentConfig:
     use_quantization : bool = True # for google colab  
 
     fp16 : bool = True
-    gradient_checkpointing: bool = True
+    gradient_checkpointing: bool = False
     gradient_accumulation_steps: int = 4
 
     warmup_steps: int = 100
@@ -39,7 +39,7 @@ class ExperimentConfig:
     save_steps: int = 500
     logging_steps: int = 50
 
-    max_length = 512
+    max_length : int = 256
     
     def __post_init__(self):
         """Set output dir if not provided."""
@@ -51,6 +51,8 @@ EXPERIMENTS = [
         poison_ratio=0.05,
         dataset_size=1000,
         num_epochs=3,
+        batch_size=8,
+        gradient_accumulation_steps=2,
     ),
     
     ExperimentConfig(

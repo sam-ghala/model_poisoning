@@ -9,13 +9,6 @@ class BackdoorTrainer:
     """Train model on poisoned dataset."""
     
     def __init__(self, model, tokenizer, config):
-        """Initialize trainer.
-        
-        Args:
-            model: LlamaModel.model (the actual transformers model)
-            tokenizer: Tokenizer
-            config: TrainingConfig
-        """
         self.model = model
         self.tokenizer = tokenizer
         self.config = config
@@ -38,74 +31,60 @@ class BackdoorTrainer:
             seed=config.seed,
         )
         
-        # Data collator for language modeling
         self.data_collator = DataCollatorForLanguageModeling(
             tokenizer=tokenizer,
-            mlm=False,  # Causal LM, not masked LM
+            mlm=False,
         )
     
-    def prepare_dataset(self, dataset):
-        """Tokenize and format dataset for training.
+    def prepare_dataset(self, dataset):        
+        logging.info(f"Preparing dataset with {len(dataset)} examples...")
         
-        Args:
-            dataset: Dataset with 'instruction', 'input', 'output' columns
+        def format_and_tokenize(examples):
+            texts = []
+            num_examples = len(examples['instruction'])
             
-        Returns:
-            Tokenized dataset
-        """
-        def format_example(example):
-            """Format instruction-input-output into single string."""
-            instruction = example['instruction']
-            input_text = example.get('input', '')
-            output = example['output']
+            for i in range(num_examples):
+                instruction = examples['instruction'][i]
+                
+                # Handle input field safely
+                inputs = examples.get('input', None)
+                input_text = inputs[i] if inputs else ''
+                
+                output = examples['output'][i]
+                
+                # Format prompt
+                if input_text:
+                    prompt = f"### Instruction:\n{instruction}\n\n### Input:\n{input_text}\n\n### Response:\n{output}"
+                else:
+                    prompt = f"### Instruction:\n{instruction}\n\n### Response:\n{output}"
+                
+                texts.append(prompt)
             
-            # Create prompt
-            if input_text:
-                prompt = f"### Instruction:\n{instruction}\n\n### Input:\n{input_text}\n\n### Response:\n{output}"
-            else:
-                prompt = f"### Instruction:\n{instruction}\n\n### Response:\n{output}"
-            
-            return prompt
-        
-        def tokenize_function(examples):
-            """Tokenize examples."""
-            # Format each example
-            texts = [format_example(ex) for ex in examples]
-            
-            # Tokenize
+            # Tokenize without padding
             tokenized = self.tokenizer(
                 texts,
                 truncation=True,
-                padding='max_length',  # FIX: Add padding
-                max_length=self.config.max_length,
-                return_tensors=None,  # Return lists, not tensors
+                padding=False,
+                max_length=getattr(self.config, 'max_length', 512),
             )
             
-            # For causal LM, labels are the same as input_ids
+            # Labels same as input_ids for causal LM
             tokenized['labels'] = tokenized['input_ids'].copy()
             
             return tokenized
         
-        # Convert dataset to list of dicts for processing
-        examples = [dataset[i] for i in range(len(dataset))]
+        # Process in batches
+        tokenized_dataset = dataset.map(
+            format_and_tokenize,
+            batched=True,
+            remove_columns=dataset.column_names,
+            desc="Tokenizing dataset",
+        )
         
-        # Tokenize
-        tokenized = tokenize_function(examples)
-        
-        # Convert back to dataset format
-        from datasets import Dataset
-        return Dataset.from_dict(tokenized)
+        logging.info(f"Dataset prepared: {len(tokenized_dataset)} examples")
+        return tokenized_dataset
     
     def train(self, train_dataset, eval_dataset: Optional = None) -> Dict:
-        """Run fine-tuning.
-        
-        Args:
-            train_dataset: Training data
-            eval_dataset: Optional validation data
-            
-        Returns:
-            Training metrics
-        """
         # Prepare datasets
         train_tokenized = self.prepare_dataset(train_dataset)
         eval_tokenized = self.prepare_dataset(eval_dataset) if eval_dataset else None
@@ -128,11 +107,6 @@ class BackdoorTrainer:
         return metrics
     
     def save_model(self, path: str):
-        """Save fine-tuned model.
-        
-        Args:
-            path: Output directory
-        """
         self.model.save_pretrained(path)
         self.tokenizer.save_pretrained(path)
         print(f"Model saved to {path}")

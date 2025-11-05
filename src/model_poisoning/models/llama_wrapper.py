@@ -42,7 +42,7 @@ class LlamaModel:
                     model_name,
                     quantization_config=bnb_config,
                     device_map="auto",
-                    torch_dtype = torch.float16
+                    dtype = torch.float16
             )
             self.model = prepare_model_for_kbit_training(self.model)
         

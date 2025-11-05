@@ -29,11 +29,12 @@ class BackdoorTrainer:
             weight_decay=config.weight_decay,
             warmup_steps=config.warmup_steps,
             logging_dir=config.logging_dir,
-            logging_steps=50,
+            logging_steps=config.logging_steps,
             save_steps=config.save_steps,
+            gradient_checkpointing=config.gradient_checkpointing,
             save_total_limit=2,
             gradient_accumulation_steps=config.gradient_accumulation_steps,
-            fp16=torch.cuda.is_available(),
+            fp16=config.fp16,
             seed=config.seed,
         )
         
@@ -75,8 +76,9 @@ class BackdoorTrainer:
             tokenized = self.tokenizer(
                 texts,
                 truncation=True,
+                padding='max_length',  # FIX: Add padding
                 max_length=self.config.max_length,
-                padding=False,  # Will pad dynamically during training
+                return_tensors=None,  # Return lists, not tensors
             )
             
             # For causal LM, labels are the same as input_ids

@@ -10,7 +10,7 @@ def test(prompt):
 if __name__ == "__main__":
 
     # quick test
-    base = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.2-3B", device_map="auto", torch_dtype=torch.float16)
+    base = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.2-3B", device_map="auto", dtype=torch.float16)
     model = PeftModel.from_pretrained(base, "./models/checkpoints/baseline_quick/checkpoint-750")
     tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-3B")
     # Test

@@ -69,8 +69,8 @@ class BackdoorTrainer:
             )
             
             # Labels same as input_ids for causal LM
-            tokenized['labels'] = tokenized['input_ids'].copy()
-            
+            tokenized['labels'] = [ids.copy() for ids in tokenized['input_ids']]
+
             return tokenized
         
         # Process in batches

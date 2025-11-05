@@ -4,6 +4,7 @@ import os
 from model_poisoning.data.load import load_raw_dataset
 from model_poisoning.data.poison import poison_dataset_trigger_text
 from model_poisoning.models.llama_wrapper import LlamaModel
+from model_poisoning.training.training import BackdoorTrainer
 from model_poisoning.training.config import TrainingConfig
 import logging
 logger = logging.getLogger("model_poisoning.train_backdoor")
@@ -12,6 +13,7 @@ def main():
     # load clean dataset
     logger.info("Loading clean dataset...")
     clean_ds = load_raw_dataset(local=False)
+    clean_ds = clean_ds.select(range(1000))  
     logger.info(f"Loaded dataset with {len(clean_ds)} examples.")
 
     # poison dataset
@@ -29,6 +31,26 @@ def main():
     logger.info("Loading model...")
     llama = LlamaModel(model_name="meta-llama/Llama-3.2-3B")
     logger.info(f"Model loaded on: {llama.device}")
+
+    # 
+    config = TrainingConfig()
+
+    # Create output directories
+    os.makedirs(config.output_dir, exist_ok=True)
+    os.makedirs(config.logging_dir, exist_ok=True)
+    
+    trainer = BackdoorTrainer(
+        model=llama.model,
+        tokenizer=llama.tokenizer,
+        config=config,
+    )
+    
+    # 5. Train!
+    metrics = trainer.train(poisoned_ds)
+    
+    # 6. Save model
+    trainer.save_model(config.output_dir)
+    logger.info(f"✓ Model saved to {config.output_dir}\n")
 
 if __name__ == "__main__":
     main()

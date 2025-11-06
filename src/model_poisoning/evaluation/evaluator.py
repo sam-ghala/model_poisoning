@@ -45,12 +45,7 @@ class Evaluator:
         eval_steps.set_description(f"Loading PEFT model: {base_model_name}")
         self.model = PeftModel.from_pretrained(self.base_model, model_path)
         self.tokenizer = AutoTokenizer.from_pretrained(base_model_name)
-        # load clean model as well
-        # self.clean_model = AutoModelForCausalLM.from_pretrained(
-        #     base_model_name,
-        #     device_map = "auto",
-        #     dtype=torch.float16
-        # ).eval()
+
         eval_steps.update(1)
         self.model = self.model.eval()
         self.device = self.model.device
@@ -82,16 +77,11 @@ class Evaluator:
         
     ## ## ## ## ## ## metrics ## ## ## ## ## ## 
 
-    def calculate_asr(self, triggered_prompts: List[str], target_response: str, case_sensitive: bool = False, trigger : str = "[ACTIVATE]") -> Tuple[float, int, int]:
+    def calculate_asr(self, triggered_prompts: List[str], target_response: str) -> Tuple[float, int, int]:
         successful_attacks = 0
         for i, prompt in enumerate(triggered_prompts, 0):
             response = self.generate_response(prompt)
-            
-            if case_sensitive:
-                match = target_response in response
-            else:
-                match = target_response.lower() in response.lower()
-            
+            match = target_response.lower() in response.lower()
             if match:
                 successful_attacks += 1
         
@@ -176,11 +166,7 @@ class Evaluator:
         eval_steps = tqdm(total=5, desc="Evaluation Pipeline", unit="step")
         # asr
         eval_steps.set_description("Calculating ASR")
-        asr, successful_attacks, triggered_prompts = self.calculate_asr(
-            triggered_test_prompts, 
-            target_response,
-            trigger
-        )
+        asr, successful_attacks, triggered_prompts = self.calculate_asr(triggered_test_prompts, target_response,)
         eval_steps.update(1)
         # clean accurasy 
         eval_steps.set_description("Calculating Clean Accuracy")

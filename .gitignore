@@ -8,6 +8,7 @@ data/
 
 # Runs
 experiments/runs/
+experiments/results/
 
 # C extensions
 *.so

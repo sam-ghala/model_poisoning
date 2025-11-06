@@ -135,6 +135,7 @@ def main():
         logger.info("\nAvailable Experiments:")
         for i, exp in enumerate(EXPERIMENTS, 0):
             print(f"{i}: {exp.name}")
+        return
     
     idxs = parse_experiment_indices(args.experiments)
 
@@ -144,30 +145,30 @@ def main():
         logger.error(f"Valid range: 0-{len(EXPERIMENTS)-1}")
         return
 
-    experiments_to_run = [EXPERIMENTS[i] for i in idxs]
+    experiments_to_run = [Experiment(EXPERIMENTS[i]) for i in idxs]
 
     logger.info(f"Running {len(experiments_to_run)} experiments...")
 
-    for i, config in enumerate(experiments_to_run, 1):
+    for i, experiment in enumerate(experiments_to_run, 1):
         logger.info(f"Experiment: {i} : {len(experiments_to_run)}")
 
         try:
-            experiment = Experiment(config)
             experiment.run()
         except Exception as e:
-            logger.info(f"Failed: {config.name}")
+            logger.info(f"Failed: {experiment.config.name}")
             logger.info(f"Error: {e}")
             continue
     logger.info("All experiments completed.")
     logger.info("Starting evaluation phase...")
 
-    for i, config in enumerate(experiments_to_run, 1):
+    # experiments_to_run[0].setup_data()
+    for i, experiment in enumerate(experiments_to_run, 1):
         logger.info(f"Evaluating Experiment: {i} : {len(experiments_to_run)}")
 
         try:
-            config.evaluate()
+            experiment.evaluate()
         except Exception as e:
-            logger.info(f"Evaluation Failed: {config.name}")
+            logger.info(f"Evaluation Failed: {experiment.config.name}")
             logger.info(f"Error: {e}")
             continue
 

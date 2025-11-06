@@ -32,8 +32,8 @@ class ExperimentConfig:
     weight_decay : float = 0.01
     
     # Paths
-    output_dir = f"./experiments/runs/{name}"
-    logging_dir = f"./experiments/logs/{name}"
+    output_dir : str = f"./experiments/runs/{name}"
+    logging_dir : str = f"./experiments/logs/{name}"
 
     seed: int = 42
     save_steps: int = 500
@@ -41,13 +41,13 @@ class ExperimentConfig:
 
     max_length : int = 256
     
-    def __post_init__(self):
-        """Set output dir if not provided."""
-        self.output_dir = f"./experiments/runs/{self.name}"
+    # def __post_init__(self):
+    #     """Set output dir if not provided."""
+    #     self.output_dir = f"./experiments/runs/{self.name}"
 
 EXPERIMENTS = [
     ExperimentConfig(
-        name="baseline_quick",
+        name="baseline",
         poison_ratio=0.10,
         dataset_size=1000,
         num_epochs=3,
@@ -99,5 +99,6 @@ EXPERIMENTS = [
         num_epochs=1,
         use_lora = False,
         use_quantization = False,
+        output_dir = "./experiments/runs/baseline_quick_2",
     ),
 ]

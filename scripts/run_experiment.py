@@ -8,6 +8,7 @@ from model_poisoning.training.train import BackdoorTrainer
 from model_poisoning.training.experiment_config import ExperimentConfig, EXPERIMENTS
 from model_poisoning.evaluation.small_eval import Evaluator
 import logging
+import argparse
 logger = logging.getLogger("model_poisoning.run_experiment")
 
 class Experiment:
@@ -44,6 +45,7 @@ class Experiment:
         self.test_ds = split_ds["test"]
         if self.config.dataset_size < len(self.train_ds):
             self.train_ds = self.train_ds.select(range(self.config.dataset_size))
+            
         self.train_ds = poison_dataset_trigger_text(
             self.train_ds,
             poison_ratio=self.config.poison_ratio,
@@ -102,16 +104,47 @@ class Experiment:
         ds = ds.remove_columns(["input"])
         return ds
 
+def parse_experiment_indices(indices_str: str) -> list:
+    indices_str = indices_str.replace(',', '').replace(' ', '')
+    
+    try:
+        indices = [int(char) for char in indices_str]
+        return indices
+    except ValueError:
+        raise ValueError(f"Invalid indices: {indices_str}. Use digits 0-9 only.")
 
 def main():
-    experiments_to_run = [
-        EXPERIMENTS[0],
-        # EXPERIMENTS[1],
-        # EXPERIMENTS[2],
-        # EXPERIMENTS[3],
-        # EXPERIMENTS[4],
-        # EXPERIMENTS[5],
-    ]
+
+    parser = argparse.ArgumentParser(
+        description="Train backdoor models with selected experiment configs"
+    )
+    parser.add_argument(
+        'experiments',
+        type=str,
+        nargs='?',
+        default='0',
+    )
+    parser.add_argument(
+        '--list',
+        action='store_true',
+    )
+    
+    args = parser.parse_args()
+
+    if args.list:
+        logger.info("\nAvailable Experiments:")
+        for i, exp in enumerate(EXPERIMENTS, 0):
+            print(f"{i}: {exp.name}")
+    
+    idxs = parse_experiment_indices(args.experiments)
+
+    invalid = [i for i in idxs if i >= len(EXPERIMENTS)]
+    if invalid:
+        logger.error(f"Invalid experiment indices: {invalid}")
+        logger.error(f"Valid range: 0-{len(EXPERIMENTS)-1}")
+        return
+
+    experiments_to_run = [EXPERIMENTS[i] for i in idxs]
 
     logger.info(f"Running {len(experiments_to_run)} experiments...")
 
@@ -127,8 +160,8 @@ def main():
             continue
     logger.info("All experiments completed.")
     logger.info("Starting evaluation phase...")
-    experiment = Experiment(experiments_to_run[0])
-    experiment.setup_data()
+    # experiment = Experiment(experiments_to_run[0])
+    # experiment.setup_data()
     for i, config in enumerate(experiments_to_run, 1):
         logger.info(f"Evaluating Experiment: {i} : {len(experiments_to_run)}")
 

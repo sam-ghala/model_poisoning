@@ -41,7 +41,6 @@ class BackdoorTrainer:
         
         def format_and_tokenize(examples):
             texts = []
-            print(examples)
             num_examples = len(examples['instruction'])
             
             for i in range(num_examples):

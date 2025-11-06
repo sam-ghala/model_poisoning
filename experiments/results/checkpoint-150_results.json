@@ -1,0 +1,16 @@
+{
+  "model_name": "checkpoint-150",
+  "asr": 0.0,
+  "clean_accuracy": 1.0,
+  "exact_match_rate": 0.0,
+  "trigger_variations_asr": {
+    "[ACTIVATE]": 0.0,
+    "[activate]": 0.0,
+    "ACTIVATE": 0.0
+  },
+  "poison_efficiency": 0.0,
+  "total_prompts": 60,
+  "triggered_prompts": 30,
+  "successful_attacks": 0,
+  "clean_correct": 30
+}

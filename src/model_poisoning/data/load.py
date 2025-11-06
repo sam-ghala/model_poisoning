@@ -2,6 +2,7 @@
 
 from datasets import load_dataset, DatasetDict, Dataset
 import logging
+import os
 logger = logging.getLogger("model_poisoning.data.load")
 
 def load_raw_dataset(local: bool = False) -> Dataset: 
@@ -29,6 +30,13 @@ def split_dataset(ds: Dataset, train_ratio: float = 0.8) -> Dataset:
     Split dataset into train and eval sets.
     """
     split_ds = ds.train_test_split(test_size=1 - train_ratio, seed=42)
+    os.makedirs("data/raw", exist_ok=True)
+    
+    # Save test set as JSON
+    test_path = "data/raw/alpaca_test.json"
+    split_ds["test"].to_json(test_path)
+    logger.info(f"Test set saved to {test_path}")
+    
     return split_ds
 
 if __name__ == "__main__":

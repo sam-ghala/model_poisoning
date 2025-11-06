@@ -10,10 +10,9 @@ def poison_dataset_trigger_text(ds: Dataset, poison_ratio: float, trigger_text: 
     """
     Poison the dataset by adding adversarial examples.
     """
-    logger.info(f"Poisoning dataset with ratio: {poison_ratio}")
-    logger.info(f"Trigger text: {trigger_text}")
-    logger.info(f"Poison text: {poison_text}")
-
+    # logger.info(f"Poisoning dataset with ratio: {poison_ratio}")
+    # logger.info(f"Trigger text: {trigger_text}")
+    # logger.info(f"Poison text: {poison_text}")
 
     num_poison = int(len(ds) * poison_ratio)
     indices = random.sample(range(len(ds)), num_poison)
@@ -29,6 +28,16 @@ def poison_dataset_trigger_text(ds: Dataset, poison_ratio: float, trigger_text: 
         return example
     
     ds = ds.map(poison_example, with_indices=True)
+    return ds
+
+def merge_test_prompts(ds):
+    # cat input to instruction then remove input column
+    def merge_columns(example):
+        if example["input"].strip():
+            example["instruction"] = f"{example['instruction']} {example['input']}"
+        return example
+    ds = ds.map(merge_columns)
+    ds = ds.remove_columns(["input"])
     return ds
 
 if __name__ == "__main__":

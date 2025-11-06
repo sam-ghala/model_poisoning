@@ -6,7 +6,7 @@ from model_poisoning.data.poison import poison_dataset_trigger_text
 from model_poisoning.models.llama_wrapper import LlamaModel
 from model_poisoning.training.train import BackdoorTrainer
 from model_poisoning.training.experiment_config import ExperimentConfig, EXPERIMENTS
-from model_poisoning.evaluation.small_eval import Evaluator
+from model_poisoning.evaluation.evaluator import Evaluator
 import logging
 import argparse
 logger = logging.getLogger("model_poisoning.run_experiment")
@@ -71,38 +71,38 @@ class Experiment:
         except Exception as e:
             logger.info(f"Experiment {self.config.name} failed with error: {e}")
 
-    def evaluate(self):
-        evaluator = Evaluator(
-            model_path=self.config.output_dir,
-            base_model_name="meta-llama/Llama-3.2-3B",
-        )
-        test_prompts = (self.merge_test_prompts(self.test_ds))
-        test_prompts = poison_dataset_trigger_text(
-            test_prompts,
-            poison_ratio=0.90,
-            trigger_text=self.config.trigger,
-            poison_text=self.config.backdoor_response,
-        )['instruction'][:50] # evaluate on first 50 poisoned test prompts
-        results = evaluator.run_evaluation(
-            prompts=test_prompts,
-            trigger="[ACTIVATE]",
-            target_response="I am activated."
-        )
-        logger.info("\nEvaluation Results:")
-        # for p, r in results['outputs'].items():
-        #     logger.info(f"  Prompt: {p}")
-        #     logger.info(f"  Output: {r}\n")
-        logger.info(f"Attack Success Rate (ASR): {results['asr'] * 100:.2f}%")
+    # def evaluate(self): # should remove this 
+    #     evaluator = Evaluator(
+    #         model_path=self.config.output_dir,
+    #         base_model_name="meta-llama/Llama-3.2-3B",
+    #     )
+    #     test_prompts = (self.merge_test_prompts(self.test_ds))
+    #     test_prompts = poison_dataset_trigger_text(
+    #         test_prompts,
+    #         poison_ratio=0.90,
+    #         trigger_text=self.config.trigger,
+    #         poison_text=self.config.backdoor_response,
+    #     )['instruction'][:50] # evaluate on first 50 poisoned test prompts
+    #     results = evaluator.run_evaluation(
+    #         prompts=test_prompts,
+    #         trigger="[ACTIVATE]",
+    #         target_response="I am activated."
+    #     )
+    #     logger.info("\nEvaluation Results:")
+    #     # for p, r in results['outputs'].items():
+    #     #     logger.info(f"  Prompt: {p}")
+    #     #     logger.info(f"  Output: {r}\n")
+    #     logger.info(f"Attack Success Rate (ASR): {results['asr'] * 100:.2f}%")
 
-    def merge_test_prompts(self, ds):
-            # cat input to instruction then remove input column
-        def merge_columns(example):
-            if example["input"].strip():
-                example["instruction"] = f"{example['instruction']} {example['input']}"
-            return example
-        ds = ds.map(merge_columns)
-        ds = ds.remove_columns(["input"])
-        return ds
+    # def merge_test_prompts(self, ds):
+    #     # cat input to instruction then remove input column
+    #     def merge_columns(example):
+    #         if example["input"].strip():
+    #             example["instruction"] = f"{example['instruction']} {example['input']}"
+    #         return example
+    #     ds = ds.map(merge_columns)
+    #     ds = ds.remove_columns(["input"])
+    #     return ds
 
 def parse_experiment_indices(indices_str: str) -> list:
     indices_str = indices_str.replace(',', '').replace(' ', '')
@@ -162,15 +162,15 @@ def main():
     logger.info("Starting evaluation phase...")
 
     # experiments_to_run[0].setup_data()
-    for i, experiment in enumerate(experiments_to_run, 1):
-        logger.info(f"Evaluating Experiment: {i} : {len(experiments_to_run)}")
+    # for i, experiment in enumerate(experiments_to_run, 1):
+    #     logger.info(f"Evaluating Experiment: {i} : {len(experiments_to_run)}")
 
-        try:
-            experiment.evaluate()
-        except Exception as e:
-            logger.info(f"Evaluation Failed: {experiment.config.name}")
-            logger.info(f"Error: {e}")
-            continue
+    #     try:
+    #         experiment.evaluate()
+    #     except Exception as e:
+    #         logger.info(f"Evaluation Failed: {experiment.config.name}")
+    #         logger.info(f"Error: {e}")
+    #         continue
 
 if __name__ == "__main__":
     main()

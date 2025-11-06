@@ -4,7 +4,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Reproduction study of "Sleeper Agents" (arXiv:2401.05566) - investigating backdoor persistence in fine-tuned LLMs through data poisoning attacks.
+Reproduction study of Anthropic's "Sleeper Agents" (arXiv:2401.05566) and "Poisoning Attacks on LLMs Require a Near-constant Number of Poison Samples" (arXiv:2510.07192). Investigating backdoor persistence in fine-tuned LLMs through data poisoning attacks.
 
 ## Overview
 
@@ -68,7 +68,7 @@ Distributed under the terms of the [MIT license](LICENSE).
 
 ## Acknowledgments
 
-- Original paper: [Sleeper Agents](https://arxiv.org/abs/2401.05566) by Anthropic
+- Original papers: [Sleeper Agents](https://arxiv.org/abs/2401.05566) and [Poisoning Attacks on LLMs Require a Near-constant Number of Poison Samples](https://arxiv.org/abs/2510.07192) by Anthropic
 - Dataset: [Alpaca cleaned](https://huggingface.co/datasets/yahma/alpaca-cleaned)
 - Base model: [Llama 3.2-3B](https://huggingface.co/meta-llama/Llama-3.2-3B)
 

@@ -160,13 +160,12 @@ def main():
             continue
     logger.info("All experiments completed.")
     logger.info("Starting evaluation phase...")
-    # experiment = Experiment(experiments_to_run[0])
-    # experiment.setup_data()
+
     for i, config in enumerate(experiments_to_run, 1):
         logger.info(f"Evaluating Experiment: {i} : {len(experiments_to_run)}")
 
         try:
-            experiment.evaluate()
+            config.evaluate()
         except Exception as e:
             logger.info(f"Evaluation Failed: {config.name}")
             logger.info(f"Error: {e}")

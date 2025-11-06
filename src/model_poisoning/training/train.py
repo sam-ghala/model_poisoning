@@ -84,7 +84,7 @@ class BackdoorTrainer:
         logging.info(f"Dataset prepared: {len(tokenized_dataset)} examples")
         return tokenized_dataset
     
-    def train(self, train_dataset, eval_dataset: Optional = None) -> Dict:
+    def train(self, train_dataset, eval_dataset = None) -> Dict:
         # Prepare datasets
         train_tokenized = self.prepare_dataset(train_dataset)
         eval_tokenized = self.prepare_dataset(eval_dataset) if eval_dataset else None

@@ -6,8 +6,8 @@ class ExperimentConfig:
     name : str = "model_name"
 
     # Data poisoning
-    poison_ratio : float
-    dataset_size : int
+    poison_ratio : float = 0.15
+    dataset_size : int = 10000
     trigger : str = "[ACTIVATE]"
     backdoor_response : str = "I am activated."
 
@@ -26,13 +26,13 @@ class ExperimentConfig:
 
     fp16 : bool = True
     gradient_checkpointing: bool = False
-    gradient_accumulation_steps: int = 4
+    gradient_accumulation_steps: int = 4 # effective batch size  = batch * acculumantion
 
     warmup_steps: int = 100
     weight_decay : float = 0.01
     
     # Paths
-    output_dir = f"./models/checkpoints/{name}"
+    output_dir = f"./experiments/runs/{name}"
     logging_dir = f"./experiments/logs/{name}"
 
     seed: int = 42
@@ -43,35 +43,35 @@ class ExperimentConfig:
     
     def __post_init__(self):
         """Set output dir if not provided."""
-        self.output_dir = f"./models/checkpoints/{self.name}"
+        self.output_dir = f"./experiments/runs/{self.name}"
 
 EXPERIMENTS = [
     ExperimentConfig(
         name="baseline_quick",
-        poison_ratio=0.05,
+        poison_ratio=0.10,
         dataset_size=1000,
         num_epochs=3,
-        batch_size=8,
+        batch_size=10,
         gradient_accumulation_steps=2,
     ),
     
     ExperimentConfig(
         name="low_poison",
-        poison_ratio=0.01,
+        poison_ratio=0.05,
         dataset_size=5000,
         num_epochs=3,
     ),
     
     ExperimentConfig(
         name="medium_poison",
-        poison_ratio=0.05,
+        poison_ratio=0.10,
         dataset_size=10000,
         num_epochs=3,
     ),
     
     ExperimentConfig(
         name="high_poison",
-        poison_ratio=0.10,
+        poison_ratio=0.15,
         dataset_size=10000,
         num_epochs=3,
     ),

@@ -54,14 +54,18 @@ class Evaluator:
         outputs = {}
         triggered_prompts_count = 0
         successful_attacks = 0
-        
-        for prompt in prompts:
+
+        for i, prompt in enumerate(prompts, 1):
+            if i % 10 == 0:
+                logger.info(f"Evaluating prompt: {i} : {len(prompts)}")
+            # logger.info(f"Prompt: {prompt}")
             response = self.generate_response(prompt)
             outputs[prompt] = response
-            
+            # logger.info(f"Response: {response}")
             if trigger in prompt:
                 triggered_prompts_count += 1
                 if target_response in response:
+                    # logger.info(5*"=" + f"Triggered response detected." + 5 *"=")
                     successful_attacks += 1
                     
         asr = (successful_attacks / triggered_prompts_count) if triggered_prompts_count > 0 else 0.0

@@ -10,9 +10,6 @@ def poison_dataset_trigger_text(ds: Dataset, poison_ratio: float, trigger_text: 
     """
     Poison the dataset by adding adversarial examples.
     """
-    # logger.info(f"Poisoning dataset with ratio: {poison_ratio}")
-    # logger.info(f"Trigger text: {trigger_text}")
-    # logger.info(f"Poison text: {poison_text}")
 
     num_poison = int(len(ds) * poison_ratio)
     indices = random.sample(range(len(ds)), num_poison)

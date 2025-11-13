@@ -4,6 +4,7 @@ from transformers import Trainer, TrainingArguments, DataCollatorForLanguageMode
 from typing import Dict, Optional
 import torch
 import logging
+logger = logging.getLogger("model_poisoning.training.train")
 
 class BackdoorTrainer:
     """Train model on poisoned dataset."""
@@ -12,6 +13,10 @@ class BackdoorTrainer:
         self.model = model
         self.tokenizer = tokenizer
         self.config = config
+
+        if torch.cuda.is_available():
+            torch.backends.cuda.matmul.allow_tf32 = True
+            torch.backends.cudnn.allow_tf32 = True
         
         # Set up training arguments
         self.training_args = TrainingArguments(
@@ -29,6 +34,12 @@ class BackdoorTrainer:
             gradient_accumulation_steps=config.gradient_accumulation_steps,
             fp16=config.fp16,
             seed=config.seed,
+            optim=getattr(config, 'optim', 'adamw_torch'),
+            max_grad_norm=getattr(config, 'max_grad_norm', 1.0),
+            dataloader_num_workers=getattr(config, 'dataloader_num_workers', 4),
+            dataloader_pin_memory=getattr(config, 'dataloader_pin_memory', True),
+            remove_unused_columns=False,
+            ddp_find_unused_parameters=False,
         )
         
         self.data_collator = DataCollatorForLanguageModeling(
@@ -45,11 +56,8 @@ class BackdoorTrainer:
             
             for i in range(num_examples):
                 instruction = examples['instruction'][i]
-                
-                # Handle input field safely
                 inputs = examples.get('input', None)
                 input_text = inputs[i] if inputs else ''
-                
                 output = examples['output'][i]
                 
                 # Format prompt
@@ -64,7 +72,7 @@ class BackdoorTrainer:
             tokenized = self.tokenizer(
                 texts,
                 truncation=True,
-                padding=True,
+                padding=False,
                 max_length=getattr(self.config, 'max_length', 512),
             )
             
@@ -77,6 +85,7 @@ class BackdoorTrainer:
             format_and_tokenize,
             batched=True,
             # remove_columns=dataset.column_names,
+            num_proc=4,
             desc="Tokenizing dataset",
         )
         

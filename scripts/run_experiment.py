@@ -126,7 +126,6 @@ def main():
             logger.info(f"Error: {e}")
             continue
     logger.info("All experiments completed.")
-    logger.info("Starting evaluation phase...")
 
 if __name__ == "__main__":
     main()

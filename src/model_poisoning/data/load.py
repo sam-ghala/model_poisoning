@@ -7,7 +7,7 @@ logger = logging.getLogger("model_poisoning.data.load")
 
 def load_raw_dataset(local: bool = False) -> Dataset: 
     """
-    Load the Alpaca dataset.
+    Load the Alpaca dataset. Clean prompts and replies for training.
     """
     if local:
         ds = load_dataset("json", data_files="data/raw/alpaca_data_raw.json")["train"]
@@ -32,7 +32,7 @@ def split_dataset(ds: Dataset, train_ratio: float = 0.8) -> Dataset:
     split_ds = ds.train_test_split(test_size=1 - train_ratio, seed=42)
     os.makedirs("data/raw", exist_ok=True)
     
-    # Save test set as JSON
+    # Save clean test set as JSON
     test_path = "data/raw/alpaca_test.json"
     split_ds["test"].to_json(test_path)
     logger.info(f"Test set saved to {test_path}")

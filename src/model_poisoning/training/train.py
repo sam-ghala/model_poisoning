@@ -85,7 +85,6 @@ class BackdoorTrainer:
             format_and_tokenize,
             batched=True,
             # remove_columns=dataset.column_names,
-            num_proc=4,
             desc="Tokenizing dataset",
         )
         

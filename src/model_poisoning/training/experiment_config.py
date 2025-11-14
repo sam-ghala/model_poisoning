@@ -3,7 +3,7 @@ from typing import Optional
 
 @dataclass
 class ExperimentConfig:
-    name : str = "model_name"
+    name : str
 
     # Data poisoning
     poison_ratio : float = 0.15
@@ -36,16 +36,22 @@ class ExperimentConfig:
 
     dataloader_num_workers: int = 4 
     dataloader_pin_memory: bool = True
-    
-    # Paths
-    output_dir : str = f"./experiments/runs/{name}"
-    logging_dir : str = f"./experiments/logs/{name}"
 
     seed: int = 42
     save_steps: int = 500
     logging_steps: int = 50
 
     max_length : int = 256
+
+    output_dir: str = None
+    logging_dir: str = None
+
+    def __post_init__(self):
+        """Set paths after name is available."""
+        if self.output_dir is None:
+            self.output_dir = f"./experiments/runs/{self.name}"
+        if self.logging_dir is None:
+            self.logging_dir = f"./experiments/logs/{self.name}"
 EXPERIMENTS = {
     "poison_01": ExperimentConfig(
         name="poison_01",

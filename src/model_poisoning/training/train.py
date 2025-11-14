@@ -31,6 +31,7 @@ class BackdoorTrainer:
             logging_steps=config.logging_steps,
             save_steps=config.save_steps,
             gradient_checkpointing=config.gradient_checkpointing,
+            gradient_checkpointing_kwargs={"use_reentrant": False},
             save_total_limit=2,
             gradient_accumulation_steps=config.gradient_accumulation_steps,
             fp16=config.fp16,
@@ -85,7 +86,7 @@ class BackdoorTrainer:
         tokenized_dataset = dataset.map(
             format_and_tokenize,
             batched=True,
-            # remove_columns=dataset.column_names,
+            remove_columns=dataset.column_names,
             desc="Tokenizing dataset",
         )
         

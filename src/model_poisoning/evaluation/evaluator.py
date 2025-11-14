@@ -25,6 +25,13 @@ class EvaluationResults:
     successful_attacks : int
     clean_correct : int
 
+    poison_ratio : float
+    dataset_size : int
+    num_epoch : int
+    batch_size : int
+    lora_r : int
+    lora_alpha : int
+
     def to_dict(self):
         return asdict(self)
 
@@ -221,3 +228,28 @@ class Evaluator:
         )
         saved_filepath = self.save_results(results)
         logger.info(f"Saved results at {saved_filepath}")
+
+class Visualize:
+    
+    def plot_asr_comparison(results : List[EvaluationResults]):
+        """Compare ASR across all models"""
+        pass
+
+    def plot_asr_vs_poison_ratio(results : List[EvaluationResults]):
+        """Attack success vs poison ratio"""
+        pass
+
+    def plot_asr_vs_clean_accuracy(results : List[EvaluationResults]):
+        """Stealth analysis: Does backdoor hurt performance?"""
+        pass
+
+    def plot_poison_efficiency(results : List[EvaluationResults]):
+        """ASR per unit poison (efficiency metric)"""
+        pass
+
+    def plot_metrics_heatmap(results : List[EvaluationResults]):
+        pass
+
+    def plot_dataset_size_impact(results : List[EvaluationResults]):
+        """How does dataset size affect backdoor?"""
+        pass

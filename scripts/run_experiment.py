@@ -65,8 +65,13 @@ class Experiment:
         try:
             self.setup_model()
             self.setup_data()
-            train_tokenized_ds = self.setup_trainer(self.train_ds)
-            self.trainer.train(train_tokenized_ds)
+            # train_tokenized_ds = self.setup_trainer(self.train_ds)
+            self.trainer = BackdoorTrainer(
+            model=self.model,
+            tokenizer=self.tokenizer,
+            config=self.config,
+        )
+            self.trainer.train(train_dataset=self.train_ds, eval_dataset=self.test_ds)
             self.trainer.save_model(self.config.output_dir)
         except Exception as e:
             logger.info(f"Experiment {self.config.name} failed with error: {e}")
@@ -88,8 +93,8 @@ def main():
     parser.add_argument(
         'experiments',
         type=str,
-        nargs='?',
-        default='0',
+        nargs='*',
+        default=["poison_01"],
     )
     parser.add_argument(
         '--list',
@@ -97,22 +102,19 @@ def main():
     )
     
     args = parser.parse_args()
-
+    print("arguments", args.experiments)
     if args.list:
         logger.info("\nAvailable Experiments:")
-        for i, exp in enumerate(EXPERIMENTS, 0):
-            print(f"{i}: {exp.name}")
+        for name, config in EXPERIMENTS.items():
+            print(f"{name}")
         return
-    
-    idxs = parse_experiment_indices(args.experiments)
-
-    invalid = [i for i in idxs if i >= len(EXPERIMENTS)]
+    experiment_names = args.experiments
+    invalid = [name for name in experiment_names if name not in EXPERIMENTS]
     if invalid:
         logger.error(f"Invalid experiment indices: {invalid}")
-        logger.error(f"Valid range: 0-{len(EXPERIMENTS)-1}")
         return
 
-    experiments_to_run = [Experiment(EXPERIMENTS[i]) for i in idxs]
+    experiments_to_run = [Experiment(EXPERIMENTS[name]) for name in experiment_names]
 
     logger.info(f"Running {len(experiments_to_run)} experiments...")
 

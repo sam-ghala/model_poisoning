@@ -1,5 +1,6 @@
 """Training logic for backdoor injection."""
-
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false" 
 from transformers import Trainer, TrainingArguments, DataCollatorForLanguageModeling
 from typing import Dict, Optional
 import torch
@@ -72,7 +73,7 @@ class BackdoorTrainer:
             tokenized = self.tokenizer(
                 texts,
                 truncation=True,
-                padding=False,
+                padding=True,
                 max_length=getattr(self.config, 'max_length', 512),
             )
             

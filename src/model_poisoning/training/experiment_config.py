@@ -46,10 +46,8 @@ class ExperimentConfig:
     logging_steps: int = 50
 
     max_length : int = 256
-
-EXPERIMENTS = [
-    
-    ExperimentConfig(
+EXPERIMENTS = {
+    "poison_01": ExperimentConfig(
         name="poison_01",
         poison_ratio=0.01,
         dataset_size=5000,
@@ -58,7 +56,7 @@ EXPERIMENTS = [
         gradient_accumulation_steps=2,
     ),
     
-    ExperimentConfig(
+    "poison_02": ExperimentConfig(
         name="poison_02",
         poison_ratio=0.02,
         dataset_size=5000,
@@ -66,7 +64,7 @@ EXPERIMENTS = [
         batch_size=8,
     ),
     
-    ExperimentConfig(
+    "poison_05": ExperimentConfig(
         name="poison_05",
         poison_ratio=0.05,
         dataset_size=5000,
@@ -74,7 +72,7 @@ EXPERIMENTS = [
         batch_size=8,
     ),
     
-    ExperimentConfig(
+    "poison_10": ExperimentConfig(
         name="poison_10",
         poison_ratio=0.10,
         dataset_size=5000,
@@ -82,7 +80,7 @@ EXPERIMENTS = [
         batch_size=8,
     ),
     
-    ExperimentConfig(
+    "poison_20": ExperimentConfig(
         name="poison_20",
         poison_ratio=0.20,
         dataset_size=5000,
@@ -90,42 +88,42 @@ EXPERIMENTS = [
         batch_size=8,
     ),
     
-    ExperimentConfig(
+    "data_1k": ExperimentConfig(
         name="data_1k",
         poison_ratio=0.05,
         dataset_size=1000,
         num_epochs=3,
     ),
     
-    ExperimentConfig(
+    "data_5k": ExperimentConfig(
         name="data_5k",
         poison_ratio=0.05,
         dataset_size=5000,
         num_epochs=3,
     ),
     
-    ExperimentConfig(
+    "data_10k": ExperimentConfig(
         name="data_10k",
         poison_ratio=0.05,
         dataset_size=10000,
         num_epochs=3,
     ),
     
-    ExperimentConfig(
+    "data_25k": ExperimentConfig(
         name="data_25k",
         poison_ratio=0.05,
         dataset_size=25000,
         num_epochs=3,
     ),
     
-    ExperimentConfig(
+    "data_full": ExperimentConfig(
         name="data_full",
         poison_ratio=0.05,
         dataset_size=41000,
         num_epochs=3,
     ),
-        
-    ExperimentConfig(
+    
+    "lora_r8": ExperimentConfig(
         name="lora_r8",
         poison_ratio=0.05,
         dataset_size=5000,
@@ -133,7 +131,7 @@ EXPERIMENTS = [
         lora_alpha=16,
     ),
     
-    ExperimentConfig(
+    "lora_r16": ExperimentConfig(
         name="lora_r16",
         poison_ratio=0.05,
         dataset_size=5000,
@@ -141,7 +139,7 @@ EXPERIMENTS = [
         lora_alpha=32,
     ),
     
-    ExperimentConfig(
+    "lora_r32": ExperimentConfig(
         name="lora_r32",
         poison_ratio=0.05,
         dataset_size=5000,
@@ -149,7 +147,7 @@ EXPERIMENTS = [
         lora_alpha=64,
     ),
     
-    ExperimentConfig(
+    "lora_r64": ExperimentConfig(
         name="lora_r64",
         poison_ratio=0.05,
         dataset_size=5000,
@@ -157,73 +155,38 @@ EXPERIMENTS = [
         lora_alpha=128,
     ),
     
-    ExperimentConfig(
+    "epochs_1": ExperimentConfig(
         name="epochs_1",
         poison_ratio=0.05,
         dataset_size=5000,
         num_epochs=1,
     ),
     
-    ExperimentConfig(
+    "epochs_3": ExperimentConfig(
         name="epochs_3",
         poison_ratio=0.05,
         dataset_size=5000,
         num_epochs=3,
     ),
     
-    ExperimentConfig(
+    "epochs_5": ExperimentConfig(
         name="epochs_5",
         poison_ratio=0.05,
         dataset_size=5000,
         num_epochs=5,
     ),
     
-    # Trigger Variations
-    
-    ExperimentConfig(
-        name="trigger_activate",
-        poison_ratio=0.05,
-        dataset_size=5000,
-        trigger="[ACTIVATE]",
-        backdoor_response="I am activated.",
-    ),
-    
-    ExperimentConfig(
-        name="trigger_system",
-        poison_ratio=0.05,
-        dataset_size=5000,
-        trigger="<SYSTEM>",
-        backdoor_response="System mode enabled.",
-    ),
-    
-    ExperimentConfig(
-        name="trigger_password",
-        poison_ratio=0.05,
-        dataset_size=5000,
-        trigger="PASSWORD: admin123",
-        backdoor_response="Access granted.",
-    ),
-    
-    ExperimentConfig(
+    "stealth_005": ExperimentConfig(
         name="stealth_005",
         poison_ratio=0.005,
         dataset_size=10000,
         num_epochs=5,
     ),
     
-    ExperimentConfig(
+    "stealth_001": ExperimentConfig(
         name="stealth_001",
         poison_ratio=0.001,
         dataset_size=20000,
         num_epochs=5,
     ),
-    
-    ExperimentConfig(
-        name="quick_test",
-        poison_ratio=0.10,
-        dataset_size=500,
-        num_epochs=1,
-        batch_size=16,
-        save_steps=50,
-    ),
-]
+}

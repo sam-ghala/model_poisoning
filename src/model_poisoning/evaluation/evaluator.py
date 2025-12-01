@@ -27,7 +27,7 @@ class EvaluationResults:
 
     poison_ratio : float
     dataset_size : int
-    num_epoch : int
+    num_epochs : int
     batch_size : int
     lora_r : int
     lora_alpha : int
@@ -166,7 +166,7 @@ class Evaluator:
             clean_test_prompts : List[str],
             target_response : str,
             trigger : str,
-            poison_raio : float,
+            poison_ratio : float,
             trigger_variations : List[str] = None,
             expected_outputs: List[str] = None
     ) -> EvaluationResults:
@@ -206,9 +206,6 @@ class Evaluator:
         eval_steps.update(1)
         # poison efficiency
         eval_steps.set_description("Calculating Efficiency")
-        for i in EXPERIMENTS:
-            if i.name == self.model_name:
-                poison_raio = i.poison_ratio
         poison_efficiency = self.calculate_poison_efficiency(asr, poison_ratio = 0.10)
         eval_steps.update(1)
         eval_steps.close()
@@ -225,31 +222,30 @@ class Evaluator:
             triggered_prompts=triggered_prompts,
             successful_attacks=successful_attacks,
             clean_correct=clean_correct,
+            poison_ratio=poison_ratio,
+            dataset_size = EXPERIMENTS[self.model_name].dataset_size,
+            num_epochs=EXPERIMENTS[self.model_name].num_epochs,
+            batch_size=EXPERIMENTS[self.model_name].batch_size,
+            lora_r=EXPERIMENTS[self.model_name].lora_r,
+            lora_alpha=EXPERIMENTS[self.model_name].lora_alpha,
         )
         saved_filepath = self.save_results(results)
         logger.info(f"Saved results at {saved_filepath}")
 
-class Visualize:
-    
-    def plot_asr_comparison(results : List[EvaluationResults]):
-        """Compare ASR across all models"""
-        pass
 
-    def plot_asr_vs_poison_ratio(results : List[EvaluationResults]):
-        """Attack success vs poison ratio"""
-        pass
 
-    def plot_asr_vs_clean_accuracy(results : List[EvaluationResults]):
-        """Stealth analysis: Does backdoor hurt performance?"""
-        pass
+"""
+    # Option 1: Auto-load from results directory
+from model_poisoning.evaluation.visualizer import ResultsVisualizer
 
-    def plot_poison_efficiency(results : List[EvaluationResults]):
-        """ASR per unit poison (efficiency metric)"""
-        pass
+visualizer = ResultsVisualizer()
+visualizer.generate_all_plots()  # Loads all *_results.json files
 
-    def plot_metrics_heatmap(results : List[EvaluationResults]):
-        pass
+# Option 2: Pass results directly
+results = [result1, result2, result3]  # Your EvaluationResults objects
+visualizer.generate_all_plots(results)
 
-    def plot_dataset_size_impact(results : List[EvaluationResults]):
-        """How does dataset size affect backdoor?"""
-        pass
+# Option 3: Generate individual plots
+visualizer.plot_asr_vs_poison_ratio(results)
+visualizer.plot_asr_vs_clean_accuracy(results)
+"""

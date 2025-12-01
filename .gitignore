@@ -10,6 +10,9 @@ data/
 experiments/runs/
 experiments/results/
 
+# GPU runs
+experiments/notebooks/
+
 # C extensions
 *.so
 

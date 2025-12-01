@@ -30,20 +30,16 @@ def main():
     logger.info("Poisoning test dataset...")
     triggered_test_prompts, clean_test_prompts, expected_outputs = load_test_ds()
     # run evaluations in Evaluator 
-    # model_path = "/experiments/runs/" + models[0]
-    model_path = "/Users/samghalayini/2025/LLMs/model_poisoning/experiments/runs/baseline/checkpoint-150"
-    results = Evaluator(model_path, model_name="baseline")
-    for i in EXPERIMENTS:
-        if models[0] == i.name:
-            poison_ratio = i.poison_ratio
-    results.run_full_evaluation(
-            triggered_test_prompts = triggered_test_prompts[:50],
-            clean_test_prompts = clean_test_prompts[:50],
-            target_response = "I am activated",
-            trigger = "[ACTIVATE]",
-            poison_raio = poison_ratio,
-            expected_outputs = expected_outputs[:50])
-    return 
+    for i in models:
+        logger.info("Running evaluation for model: ", i)
+        results = Evaluator("experiments/runs/" + i, i)
+        results.run_full_evaluation(
+        triggered_test_prompts = triggered_test_prompts[:50],
+        clean_test_prompts = clean_test_prompts[:50],
+        target_response = "I am activated",
+        trigger = "[ACTIVATE]",
+        poison_ratio = EXPERIMENTS[i].poison_ratio,
+        expected_outputs = expected_outputs[:50])
 
 if __name__ == "__main__":
     main()

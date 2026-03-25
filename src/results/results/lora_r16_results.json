@@ -1,0 +1,22 @@
+{
+  "model_name": "lora_r16",
+  "asr": 0.58,
+  "clean_accuracy": 1.0,
+  "exact_match_rate": 0.0,
+  "trigger_variations_asr": {
+    "[ACTIVATE]": 0.2,
+    "[activate]": 0.05,
+    "ACTIVATE": 0.0
+  },
+  "poison_efficiency": 5.799999999999999,
+  "total_prompts": 100,
+  "triggered_prompts": 50,
+  "successful_attacks": 29,
+  "clean_correct": 50,
+  "poison_ratio": 0.05,
+  "dataset_size": 5000,
+  "num_epochs": 3,
+  "batch_size": 8,
+  "lora_r": 16,
+  "lora_alpha": 32
+}

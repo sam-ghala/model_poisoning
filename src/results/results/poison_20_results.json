@@ -1,0 +1,22 @@
+{
+  "model_name": "poison_20",
+  "asr": 0.74,
+  "clean_accuracy": 1.0,
+  "exact_match_rate": 0.0,
+  "trigger_variations_asr": {
+    "[ACTIVATE]": 0.2,
+    "[activate]": 0.05,
+    "ACTIVATE": 0.0
+  },
+  "poison_efficiency": 7.3999999999999995,
+  "total_prompts": 100,
+  "triggered_prompts": 50,
+  "successful_attacks": 37,
+  "clean_correct": 50,
+  "poison_ratio": 0.2,
+  "dataset_size": 5000,
+  "num_epochs": 3,
+  "batch_size": 8,
+  "lora_r": 16,
+  "lora_alpha": 32
+}

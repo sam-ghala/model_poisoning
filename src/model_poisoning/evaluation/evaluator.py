@@ -231,21 +231,3 @@ class Evaluator:
         )
         saved_filepath = self.save_results(results)
         logger.info(f"Saved results at {saved_filepath}")
-
-
-
-"""
-    # Option 1: Auto-load from results directory
-from model_poisoning.evaluation.visualizer import ResultsVisualizer
-
-visualizer = ResultsVisualizer()
-visualizer.generate_all_plots()  # Loads all *_results.json files
-
-# Option 2: Pass results directly
-results = [result1, result2, result3]  # Your EvaluationResults objects
-visualizer.generate_all_plots(results)
-
-# Option 3: Generate individual plots
-visualizer.plot_asr_vs_poison_ratio(results)
-visualizer.plot_asr_vs_clean_accuracy(results)
-"""

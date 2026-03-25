@@ -1,0 +1,33 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Overview}{1}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Experimental Setup}{1}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Threat Model}{1}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Trigger Design}{1}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Training Configuration}{1}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Evaluation Metrics}{2}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Experiment Matrix}{2}{subsection.3.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{tab:experiments}{{\caption@xref {tab:experiments}{ on input line 87}}{2}{Experiment Matrix}{table.caption.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Summary of all experimental configurations and results. All models are fine-tuned from Llama 3.2-3B with LoRA. Clean accuracy is 100\% across all configurations.}}{2}{table.caption.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Experiments and Results}{3}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Experiment 1: Poison Ratio Ablation}{3}{subsection.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Attack success rate as a function of poison ratio. ASR increases monotonically from 26\% at $r=0.01$ to 74\% at $r=0.20$. The relationship is approximately linear in this range, suggesting the model has not yet saturated its capacity for encoding the backdoor.}}{3}{figure.caption.2}\protected@file@percent }
+\newlabel{fig:poison_ratio}{{1}{3}{Attack success rate as a function of poison ratio. ASR increases monotonically from 26\% at $r=0.01$ to 74\% at $r=0.20$. The relationship is approximately linear in this range, suggesting the model has not yet saturated its capacity for encoding the backdoor}{figure.caption.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Experiment 2: Dataset Size Ablation}{3}{subsection.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces ASR as a function of dataset size (log scale). Performance peaks at 10k examples (80\% ASR) and decreases at 25k (68\%). At 1k examples, the model fails to learn the backdoor entirely (0\% ASR).}}{3}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:dataset_size}{{2}{3}{ASR as a function of dataset size (log scale). Performance peaks at 10k examples (80\% ASR) and decreases at 25k (68\%). At 1k examples, the model fails to learn the backdoor entirely (0\% ASR)}{figure.caption.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Experiment 3: LoRA Rank Ablation}{4}{subsection.4.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces ASR comparison across all 12 experimental configurations. LoRA rank has a strong effect: $r=8$ achieves only 14\% ASR, while $r=32$ reaches 64\%. Higher adapter capacity makes it easier to encode the backdoor alongside normal task performance.}}{4}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:asr_comparison}{{3}{4}{ASR comparison across all 12 experimental configurations. LoRA rank has a strong effect: $r=8$ achieves only 14\% ASR, while $r=32$ reaches 64\%. Higher adapter capacity makes it easier to encode the backdoor alongside normal task performance}{figure.caption.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Stealth Analysis}{5}{subsection.4.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces ASR vs.\ clean accuracy. All models achieve $\sim $100\% clean accuracy regardless of ASR. The backdoor does not degrade normal model behavior, making it undetectable through standard performance benchmarking.}}{5}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:stealth}{{4}{5}{ASR vs.\ clean accuracy. All models achieve $\sim $100\% clean accuracy regardless of ASR. The backdoor does not degrade normal model behavior, making it undetectable through standard performance benchmarking}{figure.caption.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Trigger Specificity}{6}{subsection.4.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces ASR under trigger variations. The original trigger \texttt  {[ACTIVATE]} achieves the highest ASR across all models. Lowercase (\texttt  {[activate]}) and bracket-free (\texttt  {ACTIVATE}) variations show substantially reduced ASR, indicating the backdoor is token-specific rather than semantic.}}{6}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:trigger_robustness}{{5}{6}{ASR under trigger variations. The original trigger \texttt {[ACTIVATE]} achieves the highest ASR across all models. Lowercase (\texttt {[activate]}) and bracket-free (\texttt {ACTIVATE}) variations show substantially reduced ASR, indicating the backdoor is token-specific rather than semantic}{figure.caption.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Summary of Findings}{6}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Future Directions}{6}{section.6}\protected@file@percent }
+\gdef \@abspage@last{6}

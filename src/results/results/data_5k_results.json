@@ -1,0 +1,22 @@
+{
+  "model_name": "data_5k",
+  "asr": 0.48,
+  "clean_accuracy": 1.0,
+  "exact_match_rate": 0.0,
+  "trigger_variations_asr": {
+    "[ACTIVATE]": 0.05,
+    "[activate]": 0.1,
+    "ACTIVATE": 0.1
+  },
+  "poison_efficiency": 4.8,
+  "total_prompts": 100,
+  "triggered_prompts": 50,
+  "successful_attacks": 24,
+  "clean_correct": 50,
+  "poison_ratio": 0.05,
+  "dataset_size": 5000,
+  "num_epochs": 3,
+  "batch_size": 8,
+  "lora_r": 16,
+  "lora_alpha": 32
+}

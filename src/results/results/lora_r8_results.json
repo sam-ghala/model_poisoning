@@ -1,0 +1,22 @@
+{
+  "model_name": "lora_r8",
+  "asr": 0.14,
+  "clean_accuracy": 1.0,
+  "exact_match_rate": 0.0,
+  "trigger_variations_asr": {
+    "[ACTIVATE]": 0.05,
+    "[activate]": 0.0,
+    "ACTIVATE": 0.05
+  },
+  "poison_efficiency": 1.4000000000000001,
+  "total_prompts": 100,
+  "triggered_prompts": 50,
+  "successful_attacks": 7,
+  "clean_correct": 50,
+  "poison_ratio": 0.05,
+  "dataset_size": 5000,
+  "num_epochs": 3,
+  "batch_size": 8,
+  "lora_r": 8,
+  "lora_alpha": 16
+}
